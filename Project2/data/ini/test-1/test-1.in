@@ -1,5 +1,5 @@
 &inputs
- Ngrid = 10
+ Ngrid = 500
  rho_max = 5.0
  Nsort = 3
  Nbody = 1

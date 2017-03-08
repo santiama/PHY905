@@ -1,0 +1,7 @@
+&inputs
+ Ngrid = 500
+ rho_max = 5
+ Nsort = 3
+ Nbody = 2
+ omega_r = 0.5
+/

@@ -19,7 +19,8 @@ contains
     subroutine solve()
     !{ Solves via jacobi
       implicit none
-      call jacobi(a, Ngrid, eigvals, eigvecs, Niter, Nsort)
+!     call jacobi_cyclic(a, Ngrid, eigvals, eigvecs, Niter, Nsort)
+      call jacobi_classical(a, Ngrid, eigvals, eigvecs, Niter, Nsort)
     !}
     end subroutine solve
 
@@ -69,10 +70,10 @@ contains
 		  end do
       
 			! print a header and the original matrix
-      write (*,200)
-      do i=1,Ngrid
-         write (*,201) (a(i,j),j=1,Ngrid)
-      end do
+!      write (*,200)
+!      do i=1,Ngrid
+!         write (*,201) (a(i,j),j=1,Ngrid)
+!      end do
 
 			200 format (' Quantum Harmonic Oscillator (Jacobi method) ',/, &
 			            ' Matrix A')
