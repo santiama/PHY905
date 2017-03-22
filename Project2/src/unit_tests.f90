@@ -1,14 +1,16 @@
 module unit_tests
   use linalg 
   implicit none
-	integer(kind=4) :: i,j,k,l,n,nit
-  real(kind=8) :: maxoff, a(3,3), eigvals(3)
+	integer(kind=4) :: i,j,k,l,n,nit,nmax_test
+  real(kind=8) :: maxoff, a(3,3), eigvals(3), tol_test
 	character(len=20) :: fmt
 	real(kind=8) :: x(3,3)
 contains
 
 subroutine init_tests()
   implicit none
+  nmax_test = 1000000
+  tol_test = 1.d-9
   a(1,1)=1.0
   a(1,2)=2.0
   a(1,3)=3.0
@@ -29,7 +31,7 @@ end subroutine max_test
 
 subroutine gram_test()
   implicit none
-  call jacobi_classical(a,n,eigvals,x,nit,n)
+  call jacobi_classical(a,n,eigvals,x,nit,n,nmax_test,tol_test)
   print *, "Orthogonality Testing : "
 	do i = 1, n
 		do j = i+1, n

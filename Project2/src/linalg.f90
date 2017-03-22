@@ -2,7 +2,7 @@ module linalg
     implicit none
 
 contains
-  subroutine jacobi_classical(a,n,eigvals,x,Niter,Nsort)
+  subroutine jacobi_classical(a,n,eigvals,x,Niter,Nsort,nmax,tol)
   !{ Classical Jacobi method. Finds pivots via max off-diagonal at each iteration. 
   !  Converges in fewer iterations but generally is slower than the cyclic method
 
@@ -13,8 +13,6 @@ contains
   real(kind=8) ::  beta, tol, maxoffdiag
   real(kind=8) ::  c, s, t, sort_min, sort_tmp(n)
 	real(kind=8) ::  a_ll, a_kk, a_ik, a_il, e_ik, e_il 
-  parameter(nmax=50000)
-  parameter(tol=1.0d-5)
 
 	Niter = 0
   k = 0
@@ -100,7 +98,7 @@ contains
   !}
   end subroutine jacobi_classical
 
-	subroutine jacobi_cyclic(a,n,eigvals,x,Niter,Nsort)
+	subroutine jacobi_cyclic(a,n,eigvals,x,Niter,Nsort,nmax,tol)
   !{ Cyclic jacobi method. Instead of finding max off diagonal, 
   !  simply goes row by row and convergence criteria is based off
   !  sum of off diagonals instead
@@ -113,9 +111,6 @@ contains
 	real(kind=8) :: tol, b2, bar
 	real(kind=8) :: beta, t, c, s, sort_min
   real(kind=8) :: a_ik, a_jk, a_ki, a_kj, e_ki, e_kj
-	
-	parameter(nmax=10000)
-	parameter(tol=1.0d-10)
 	
 	Niter = 0
 	x = 0.0

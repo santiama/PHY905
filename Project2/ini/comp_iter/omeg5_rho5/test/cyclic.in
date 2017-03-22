@@ -1,0 +1,10 @@
+&inputs
+ Ngrid = 500
+ rho_max = 5.0
+ Nsort = 500
+ Nbody = 1
+ omega_r = 5.0
+ cyclic = .TRUE. 
+ tol = 1.d-9
+ nmax = 1000000
+/

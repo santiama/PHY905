@@ -1,0 +1,9 @@
+CLASSICAL:
+==========
+real       :  3m51.386s
+iterations :  351881
+
+CYCLIC:
+==========
+real       :  0m27.328s
+iterations :  539

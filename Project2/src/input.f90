@@ -1,10 +1,11 @@
 module input
   use linalg
   implicit none    
-	real(kind=8) :: rho_max, omega_r, h, hsq, pot 
-  integer(kind=4) :: Ngrid, Nsort, Nbody, Niter, i, j
+	real(kind=8) :: rho_max, omega_r, h, hsq, pot,tol 
+  integer(kind=4) :: Ngrid, Nsort, Nbody, Niter, i, j, nmax
   real(kind=8), allocatable :: a(:,:), eigvecs(:,:), eigvals(:), rho(:)
-  namelist /inputs/ Ngrid, rho_max, Nsort, Nbody, omega_r
+  logical :: cyclic 
+  namelist /inputs/ Ngrid, rho_max, Nsort, Nbody, omega_r, cyclic, tol, nmax
         
 contains
     subroutine read_inputs(infile)
@@ -19,8 +20,11 @@ contains
     subroutine solve()
     !{ Solves via jacobi
       implicit none
-!     call jacobi_cyclic(a, Ngrid, eigvals, eigvecs, Niter, Nsort)
-      call jacobi_classical(a, Ngrid, eigvals, eigvecs, Niter, Nsort)
+      if (cyclic .EQV. .TRUE.) then
+        call jacobi_cyclic(a, Ngrid, eigvals, eigvecs, Niter, Nsort, nmax, tol)
+      else
+        call jacobi_classical(a, Ngrid, eigvals, eigvecs, Niter, Nsort, nmax, tol)
+      end if
     !}
     end subroutine solve
 
@@ -69,6 +73,12 @@ contains
 		  	a(i-1,i) = -1.d0/hsq
 		  end do
       
+      if (cyclic .EQV. .TRUE.) then
+        print*, "SOLVER TYPE = CYCLIC"
+      else
+        print*, "SOLVER TYPE = CLASSICAL"
+      end if
+
 			! print a header and the original matrix
 !      write (*,200)
 !      do i=1,Ngrid

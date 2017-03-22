@@ -1,0 +1,36 @@
+#!/bin/bash
+
+exec="../../../solver.x test.ini"
+
+for x in 50 100 150 200 250 300 350 400 450 500; do
+cat > test.ini << EOF
+&inputs
+ Ngrid = ${x} 
+ rho_max = 5.0
+ Nsort = ${x}
+ Nbody = 1
+ omega_r = .5
+ cyclic = .FALSE. 
+ tol = 1.d-9
+ nmax = 1000000
+/
+EOF
+(time $exec) > grid${x}_classic.out 2>&1
+rm -f test.ini
+
+cat > test.ini << EOF
+&inputs
+ Ngrid = ${x}
+ rho_max = 5.0
+ Nsort = ${x} 
+ Nbody = 1
+ omega_r = .5
+ cyclic = .TRUE. 
+ tol = 1.d-9
+ nmax = 1000000
+/
+EOF
+(time $exec) > grid${x}_cyclic.out 2>&1
+rm -f test.ini
+
+done
