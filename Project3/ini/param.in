@@ -1,0 +1,7 @@
+&inputs
+ method  = 1
+ runtime = 200
+ Nsteps  = 100
+ Nbody   = 2
+ toler   = 1.0d-3
+/
