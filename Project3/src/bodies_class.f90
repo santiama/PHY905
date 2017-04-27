@@ -107,49 +107,24 @@ function get_pos(this) result(positions)
 !}
 end function get_pos
 
-subroutine compute_accel(this, positions, accelerations)
+subroutine compute_accel(this, pos, acc)
 !{
     class(solar_system), intent(in) :: this
-    real(DP),      intent(in)    :: positions(this%Nbody, 3)
-    real(DP),      intent(out)   :: accelerations(this%Nbody, 3)
-    real(DP) :: number_array(this%Nbody)
-    real(DP) :: vector_array(this%Nbody, 3)
+    real(DP),      intent(in)    :: pos(this%Nbody, 3)
+    real(DP),      intent(out)   :: acc(this%Nbody, 3)
+    real(DP) :: tmp(this%Nbody)
+    real(DP) :: dists(this%Nbody, 3)
     integer  :: i, n
     n = this%Nbody
     accelerations = 0.0d0
 
     do i = 1, n-1
-
-        vector_array(i+1:n, 1) = positions(i, 1) - positions(i+1:n, 1)
-        vector_array(i+1:n, 2) = positions(i, 2) - positions(i+1:n, 2)
-        vector_array(i+1:n, 3) = positions(i, 3) - positions(i+1:n, 3)
-        !       |
-        !   r_i - r_j
-
-        number_array(i+1:n) = vector_array(i+1:n, 1)*vector_array(i+1:n, 1) + &
-                              vector_array(i+1:n, 2)*vector_array(i+1:n, 2) + &
-                              vector_array(i+1:n, 3)*vector_array(i+1:n, 3)
-        !       |
-        !   |r_ij|^2
-
-        number_array(i+1:n) = G/(number_array(i+1:n)*sqrt(number_array(i+1:n)))
-        !       |
-        !   G/|r_ij|^3
-
-        vector_array(i+1:n, 1) = number_array(i+1:n)*vector_array(i+1:n, 1)
-        vector_array(i+1:n, 2) = number_array(i+1:n)*vector_array(i+1:n, 2)
-        vector_array(i+1:n, 3) = number_array(i+1:n)*vector_array(i+1:n, 3)
-        !       |
-        !   G*r_ij/|r_ij|^3
-
-        ! Update acceleration of body i
-        accelerations(i, 1)     = accelerations(i, 1) - sum(this%bodies(i+1:n)%mass*vector_array(i+1:n, 1))
-        accelerations(i, 2)     = accelerations(i, 2) - sum(this%bodies(i+1:n)%mass*vector_array(i+1:n, 2))
-        accelerations(i, 3)     = accelerations(i, 3) - sum(this%bodies(i+1:n)%mass*vector_array(i+1:n, 3))
-        accelerations(i+1:n, 1) = accelerations(i+1:n, 1) + this%bodies(i)%mass*vector_array(i+1:n, 1)
-        accelerations(i+1:n, 2) = accelerations(i+1:n, 2) + this%bodies(i)%mass*vector_array(i+1:n, 2)
-        accelerations(i+1:n, 3) = accelerations(i+1:n, 3) + this%bodies(i)%mass*vector_array(i+1:n, 3)
-
+        dists(i+1:n, :) = pos(i, :) - pos(i+1:n, :)
+        tmp(i+1:n) = dists(i+1:n, 1)**2 + dists(i+1:n,2)**2 + dists(i+1:n,3)**2
+        tmp(i+1:n) = G/(tmp(i+1:n)*sqrt(tmp(i+1:n)))
+        dists(i+1:n, :) = tmp(i+1:n)*dists(i+1:n, :)
+        acc(i, :) = acc(i, :) - sum(this%bodies(i+1:n)%mass*dists(i+1:n, :))
+        acc(i+1:n, :) = acc(i+1:n, :) + this%bodies(i)%mass*dists(i+1:n, :)
     end do
 !}
 end subroutine compute_accel
